@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: pagerduty
+  labels:
+    alertmanagerConfig: monitoring
+spec:
+  route:
+    groupBy: ['job']
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 2h
+    receiver: pd
+  receivers:
+    - name: pd
+      pagerdutyConfigs:
+        - serviceKey:
+            name: pdsecret
+            key: pdServicekey

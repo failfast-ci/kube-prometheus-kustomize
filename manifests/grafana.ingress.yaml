@@ -1,0 +1,79 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/auth-signin: https://oauth2-proxy.failfast-ci.com/oauth2/start?rd=https%3A%2F%2F$host$escaped_request_uri
+    nginx.ingress.kubernetes.io/auth-url: https://oauth2-proxy.failfast-ci.com/oauth2/auth
+  name: grafana
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: dashboards.failfast-ci.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: grafana
+            port:
+              number: 3000
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - dashboards.failfast-ci.com
+    secretName: dashboards-certs
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/auth-signin: https://oauth2-proxy.failfast-ci.com/oauth2/start?rd=https%3A%2F%2F$host$escaped_request_uri
+    nginx.ingress.kubernetes.io/auth-url: https://oauth2-proxy.failfast-ci.com/oauth2/auth
+  name: alertmanager
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: alertmanager.failfast-ci.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: alertmanager-main
+            port:
+              number: 9093
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - alertmanager.failfast-ci.com
+    secretName: alertmanager-certs
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/auth-signin: https://oauth2-proxy.failfast-ci.com/oauth2/start?rd=https%3A%2F%2F$host$escaped_request_uri
+    nginx.ingress.kubernetes.io/auth-url: https://oauth2-proxy.failfast-ci.com/oauth2/auth
+  name: prometheus
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: prometheus.failfast-ci.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: prometheus-k8s
+            port:
+              number: 9090
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - prometheus.failfast-ci.com
+    secretName: prometheus-certs

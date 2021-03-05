@@ -1,9 +1,34 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+configurations:
+  - kustomizeconfig.yaml
 
 resources:
-   - 'manifests/upstream'
+   - manifests/upstream
+   - manifests/alertmanager-config.yaml
+   - manifests/grafana.ingress.yaml
 
 patches:
 - path: manifests/all-namespaces/patches/prometheus-ClusterRole.yaml
 - path: manifests/prometheus-pvc/patches/prometheus-prometheus.yaml
+- path: manifests/patches/grafana-deployment.yaml
+- path: manifests/patches/alertmanager-alertmanager.yaml
+  target:
+    group: monitoring.coreos.com
+    kind: Alertmanager
+    name: main
+    version: v1
+
+
+secretGenerator:
+- files:
+  - manifests/secrets/pdServicekey
+  name: pdsecret
+  type: Opaque
+  namespace: monitoring
+
+configMapGenerator:
+- files:
+  - manifests/configs/grafana.config.yaml
+  name: grafana-ini
+  namespace: monitoring
