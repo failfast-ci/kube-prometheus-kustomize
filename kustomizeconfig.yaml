@@ -1,0 +1,5 @@
+nameReference:
+- kind: Secret
+  fieldSpecs:
+  - path: spec/receivers/pagerdutyConfigs/serviceKey/name
+    kind: AlertmanagerConfig
